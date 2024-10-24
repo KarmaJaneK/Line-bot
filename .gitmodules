@@ -1,0 +1,3 @@
+[submodule "line-bot-sdk-nodejs"]
+	path = line-bot-sdk-nodejs
+	url = https://github.com/line/line-bot-sdk-nodejs.git
