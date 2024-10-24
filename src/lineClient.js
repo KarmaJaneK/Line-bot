@@ -13,6 +13,7 @@ const client = new line.messagingApi.MessagingApiClient({
 });
 
 //create express app
+const app = express();
 app.post('/callback', line.middleware(config), (req, res) => {
     Promise
         .all(req.body.events.map(handleEvent))
