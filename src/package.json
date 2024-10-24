@@ -1,0 +1,14 @@
+{
+  "name": "class-reminder-bot",
+  "version": "0.0.0",
+  "description": "bot to remind class schedule",
+  "main": "index.js",
+  "scripts": {
+    "build-sdk": "cd ../../; npm i; npm run build",
+    "start": "node ."
+  },
+  "dependencies": {
+    "@line/bot-sdk": "../../",
+    "express": "^4.17.3"
+  }
+}
