@@ -1,27 +1,22 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-
 const { handleEvent, sendReminders } = require('./handler');
 const cron = require('node-cron');
 const { join } = require('node:path');
 const axios = require('axios');
-
 const app = express();
-
-
-
-// Serve the HTML file
-app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'index.html'));
-});
 
 // Use the CORS middleware
 app.use(cors());
 
 // Use the JSON middleware
 app.use(express.json());
+
+// Serve the HTML file
+app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'index.html'));
+});
 
 // Webhook for LINE messages
 app.post('/webhook', async (req, res) => {
@@ -75,6 +70,8 @@ app.get('/test-airtable', async (req, res) => {
     }
 });
 
+// listen on port
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
