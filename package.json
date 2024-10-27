@@ -4,8 +4,8 @@
   "description": "bot to remind class schedule",
   "main": "index.js",
   "scripts": {
-    "build-sdk": "cd ../../; npm i; npm run build",
-    "start": "node ."
+    "build-sdk": "cd ..; npm i; npm run build",
+    "start": "node src"
   },
   "dependencies": {
     "@line/bot-sdk": "../../",
