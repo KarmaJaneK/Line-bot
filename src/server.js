@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 
-const { handleEvent, sendReminders } = require('./handlers');
+const { handleEvent, sendReminders } = require('handlers.js');
 const cron = require('node-cron');
 const { join } = require('node:path');
 const axios = require('axios');
