@@ -1,5 +1,5 @@
 const line = require('@line/bot-sdk');
-import express from 'express';
+const express = require('express');
 const handleEvent = require('./handler');
 
 // create LINE SDK config from env variables
