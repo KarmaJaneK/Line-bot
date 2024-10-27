@@ -15,12 +15,19 @@ async function sendReminders() {
         tomorrow.setDate(tomorrow.getDate() + 1);
         const tomorrowDate = tomorrow.toISOString().split('T')[0];
 
+
         for (const record of records) {
-            const classTime = record.get('Booking date/time');
-            const userId = record.get('Line ID');
-            const reminderSent = record.get('Reminder sent');
-            const willAttend = record.get('Will attend');
-            const willNotAttend = record.get('Will not attend');
+            if (!record.fields || Object.keys(record.fields).length === 0) {
+                console.error(`Empty fields for record ID: ${record.id}`);
+                continue;
+            }
+            const {
+                'Booking date/time': classTime,
+                'Line ID': userId,
+                'Reminder sent': reminderSent,
+                'Will attend': willAttend,
+                'Will not attend': willNotAttend
+            } = record.fields;
 
             if (!reminderSent && classTime.startsWith(tomorrowDate) && willAttend === undefined && willNotAttend === undefined) {
                 const remainingClasses = await airtableBase('Unused Classes').select({
