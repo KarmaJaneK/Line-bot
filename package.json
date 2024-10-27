@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build-sdk": "cd ..; npm i; npm run build",
-    "start": "node src"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "@line/bot-sdk": "../../",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.17.3"
   }
