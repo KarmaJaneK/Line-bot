@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { client } = require('./lineClient.js');
 const airtableBase = require('./airtableClient.js');
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuid } = require('uuid');
 const app = express();
 app.use(express.json());
 
@@ -37,7 +37,7 @@ async function sendReminders() {
                 const message = `Reminder: You have a class scheduled at ${classTime}. Please confirm if you will attend or not. ${remainingClassesMessage}`;
 
                 // Generate a unique key for the X-Line-Retry-Key parameter
-               const retryKey = uuidv4();
+               const retryKey = uuid();
                 console.log('Generated retry key:', retryKey);
 
                 await client.pushMessage(userId, [{ type: 'text', text: message }], {
