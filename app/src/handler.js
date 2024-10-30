@@ -38,9 +38,7 @@ async function sendReminders() {
 
 
                 await client.pushMessage(userId, [{ type: 'text', text: message }], {
-                    headers: {
-
-                    }
+                    headers: {}
                 });
    await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
