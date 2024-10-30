@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const { client } = require('./lineClient.js');
@@ -14,7 +13,6 @@ async function sendReminders() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         const tomorrowDate = tomorrow.toISOString().split('T')[0];
-
 
         for (const record of records) {
             if (!record.fields || Object.keys(record.fields).length === 0) {
@@ -34,11 +32,14 @@ async function sendReminders() {
                     filterByFormula: `{Line ID} = '${userId}'`,
                 }).all();
 
-                let remainingClassesMessage = `\n\nRemaining classes: (${remainingClasses})`;
+                let remainingClassesMessage = `\n\nRemaining classes: (${remainingClasses.length})`;
 
                 const message = `Reminder: You have a class scheduled at ${classTime}. Please confirm if you will attend or not. ${remainingClassesMessage}`;
-                await client.pushMessage(userId, [{ type: 'text', text: message }]);
-                await airtableBase('Bot Test').update(record.id, {
+
+                await client.pushMessage(userId, [{ type: 'text', text: message }], {
+                    headers: {}
+                });
+   await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
             }
