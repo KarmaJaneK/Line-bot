@@ -1,14 +1,9 @@
-const line = require('@line/bot-sdk');
-
-// create LINE SDK config from env variables
-const config = {
-    channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-    channelSecret: process.env.LINE_CHANNEL_SECRET,
-};
+const { messagingApi } = require('@line/bot-sdk');
+const { MessagingApiClient } = messagingApi;
 
 // create LINE SDK client
-const Client = new line.Client(config);
+const client = new MessagingApiClient({
+    channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+});
 
-
-module.exports = { Client, line };
-
+module.exports = { client };
