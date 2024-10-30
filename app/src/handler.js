@@ -37,15 +37,15 @@ async function sendReminders() {
                 const message = `Reminder: You have a class scheduled at ${classTime}. Please confirm if you will attend or not. ${remainingClassesMessage}`;
 
                 // Generate a unique key for the X-Line-Retry-Key parameter
-               const retryKey = uuid();
+                const retryKey = uuid();
                 console.log('Generated retry key:', retryKey);
 
-                await client.pushMessage(userId, [{ type: 'text', text: message }], {
+                await client.pushMessage(userId, [{type: 'text', text: message}], {
                     headers: {
-                        'X-Line-Retry-Key': retryKey
+                        'x-Line-Retry-Key': retryKey
                     }
                 });
-   await airtableBase('Bot Test').update(record.id, {
+                await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
             }
@@ -91,10 +91,10 @@ async function handleEvent(event) {
                 if (willAttend === undefined && willNotAttend === undefined) {
                     if (WillAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will attend': true});
-                        await client.replyMessage(replyToken, {
+                        await client.replyMessage(replyToken, [{
                             type: 'text',
                             text: 'Thank you for confirming your attendance!'
-                        });
+                        }]);
                     } else if (WillNotAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will not attend': true});
                         await client.replyMessage(replyToken, {type: 'text', text: 'Thank you for informing us.'});
