@@ -37,7 +37,7 @@ async function sendReminders() {
                 let remainingClassesMessage = `\n\nRemaining classes: (${remainingClasses})`;
 
                 const message = `Reminder: You have a class scheduled at ${classTime}. Please confirm if you will attend or not. ${remainingClassesMessage}`;
-                await lineClient.pushMessage(userId, { type: 'text', text: message });
+                await client.pushMessage(userId, { type: 'text', text: message });
                 await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
@@ -84,13 +84,13 @@ async function handleEvent(event) {
                 if (willAttend === undefined && willNotAttend === undefined) {
                     if (WillAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will attend': true});
-                        await lineClient.replyMessage(replyToken, {
+                        await client.replyMessage(replyToken, {
                             type: 'text',
                             text: 'Thank you for confirming your attendance!'
                         });
                     } else if (WillNotAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will not attend': true});
-                        await lineClient.replyMessage(replyToken, {type: 'text', text: 'Thank you for informing us.'});
+                        await client.replyMessage(replyToken, {type: 'text', text: 'Thank you for informing us.'});
                     } else {
                         return null;
                     }
