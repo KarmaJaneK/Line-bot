@@ -1,7 +1,7 @@
 
 require('dotenv').config();
 const express = require('express');
-const client = require('./lineClient.js');
+const { client } = require('./lineClient.js');
 const airtableBase = require('./airtableClient.js');
 
 const app = express();
@@ -37,7 +37,7 @@ async function sendReminders() {
                 let remainingClassesMessage = `\n\nRemaining classes: (${remainingClasses})`;
 
                 const message = `Reminder: You have a class scheduled at ${classTime}. Please confirm if you will attend or not. ${remainingClassesMessage}`;
-                await client.pushMessage(userId, { type: 'text', text: message });
+                await client.pushMessage(userId, [{ type: 'text', text: message }]);
                 await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
