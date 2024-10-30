@@ -1,6 +1,4 @@
 const line = require('@line/bot-sdk');
-const express = require('express');
-const handleEvent = require('./handler');
 
 // create LINE SDK config from env variables
 const config = {
@@ -9,6 +7,8 @@ const config = {
 };
 
 // create LINE SDK client
-const client = new line.Client(config);
+const Client = new line.Client(config);
 
-module.exports = { client, line };
+
+module.exports = { Client, line };
+

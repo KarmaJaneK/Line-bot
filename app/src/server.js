@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { handleEvent, sendReminders } = require('./handler');
+const { handleEvent, sendReminders } = require('./handler.js');
 const cron = require('node-cron');
 const { join } = require('node:path');
 const axios = require('axios');

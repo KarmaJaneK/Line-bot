@@ -1,8 +1,8 @@
 
 require('dotenv').config();
 const express = require('express');
-const lineClient = require('./lineClient');
-const airtableBase = require('./airtableClient');
+const lineClient = require('./lineClient.js');
+const airtableBase = require('./airtableClient.js');
 
 const app = express();
 app.use(express.json());
