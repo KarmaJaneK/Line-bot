@@ -38,6 +38,7 @@ async function sendReminders() {
 
                 // Generate a unique key for the X-Line-Retry-Key parameter
                 const retryKey = crypto.randomUUID();
+                console.log('Generated retry key:', retryKey);
 
                 await client.pushMessage(userId, [{ type: 'text', text: message }], {
                     headers: {
