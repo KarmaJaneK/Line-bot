@@ -52,10 +52,14 @@ async function sendReminders() {
                     continue;
                 }
 
-                await customClient.post('/push', {
+                // Log the request body for debugging
+                const requestBody = {
                     to: userId,
                     messages: [{ type: 'text', text: message }]
-                });
+                };
+                console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+                await customClient.post('/push', requestBody);
 
                 await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
