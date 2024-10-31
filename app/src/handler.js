@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { client } = require('./lineClient.js');
+const { customClient } = require('./lineClient.js');
 const airtableBase = require('./airtableClient.js');
 const { v4: uuid } = require('uuid');
 const app = express();
@@ -47,11 +47,11 @@ async function sendReminders() {
                     'X-Line-Retry-Key': retryKey
                 });
 
-                await client.pushMessage(userId, [{type: 'text', text: message}], {
-                    headers: {
-                        'X-Line-Retry-Key': retryKey
-                    }
+                await customClient.post('/push', {
+                    to: userId,
+                    messages: [{ type: 'text', text: message }]
                 });
+
                 await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
@@ -101,23 +101,21 @@ async function handleEvent(event) {
 
                     if (WillAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will attend': true});
-                        await client.replyMessage(replyToken, [{
-                            type: 'text',
-                            text: 'Thank you for confirming your attendance!'
-                        }], {
-                            headers: {
-                                'X-Line-Retry-Key': retryKey
-                            }
+                        await customClient.post('/reply', {
+                            replyToken: replyToken,
+                            messages: [{
+                                type: 'text',
+                                text: 'Thank you for confirming your attendance!'
+                            }]
                         });
                     } else if (WillNotAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will not attend': true});
-                        await client.replyMessage(replyToken, {
-                            type: 'text',
-                            text: 'Thank you for informing us.'
-                        }, {
-                            headers: {
-                                'X-Line-Retry-Key': retryKey
-                            }
+                        await customClient.post('/reply', {
+                            replyToken: replyToken,
+                            messages: [{
+                                type: 'text',
+                                text: 'Thank you for informing us.'
+                            }]
                         });
                     } else {
                         return null;
