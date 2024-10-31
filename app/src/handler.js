@@ -46,6 +46,11 @@ async function sendReminders() {
                 console.log('Headers:', {
                     'X-Line-Retry-Key': retryKey
                 });
+                // Validate userId before sending the request
+                if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+                    console.error('Invalid userId:', userId);
+                    continue;
+                }
 
                 await customClient.post('/push', {
                     to: userId,
