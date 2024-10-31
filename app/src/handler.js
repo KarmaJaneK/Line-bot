@@ -9,6 +9,7 @@ app.use(express.json());
 // Function to send reminders to users
 async function sendReminders(userId) {
     try {
+        // Fetch all records from the 'Bot Test' table in Airtable
         const records = await airtableBase('Bot Test').select().all();
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -27,7 +28,9 @@ async function sendReminders(userId) {
                 'Will not attend': willNotAttend
             } = record.fields;
 
+            // Check if a reminder needs to be sent
             if (!reminderSent && classTime.startsWith(tomorrowDate) && willAttend === undefined && willNotAttend === undefined) {
+                // Fetch remaining classes for the user
                 const remainingClasses = await airtableBase('Unused Classes').select({
                     filterByFormula: `{Line ID} = '${recordUserId}'`,
                 }).all();
@@ -60,8 +63,10 @@ async function sendReminders(userId) {
                 };
                 console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
+                // Send the reminder message
                 await customClient.post('/push', requestBody);
 
+                // Update the record to indicate that the reminder has been sent
                 await airtableBase('Bot Test').update(record.id, {
                     'Reminder sent': true,
                 });
@@ -69,6 +74,7 @@ async function sendReminders(userId) {
         }
     } catch (error) {
         console.error('Error in sendReminders:', error);
+        // Retry sending reminders after 5 hours if an error occurs
         setTimeout(() => sendReminders(userId), 5 * 60 * 60 * 1000);
     }
 }
@@ -96,6 +102,7 @@ async function handleEvent(event) {
         ];
 
         try {
+            // Fetch records for the user from the 'Bot Test' table in Airtable
             const records = await airtableBase('Bot Test').select({
                 filterByFormula: `{Line ID} = '${userId}'`,
             }).all();
@@ -109,6 +116,7 @@ async function handleEvent(event) {
                     const retryKey = uuid();
                     console.log('Generated retry key:', retryKey);
 
+                    // Check if the user confirmed attendance
                     if (WillAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will attend': true});
                         await customClient.post('/reply', {
@@ -118,6 +126,7 @@ async function handleEvent(event) {
                                 text: 'Thank you for confirming your attendance!'
                             }]
                         });
+                        // Check if the user declined attendance
                     } else if (WillNotAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will not attend': true});
                         await customClient.post('/reply', {
