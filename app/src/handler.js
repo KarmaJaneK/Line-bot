@@ -42,7 +42,7 @@ async function sendReminders() {
 
                 await client.pushMessage(userId, [{type: 'text', text: message}], {
                     headers: {
-                        'x-Line-Retry-Key': retryKey
+                        'X-Line-Retry-Key': retryKey
                     }
                 });
                 await airtableBase('Bot Test').update(record.id, {
@@ -89,15 +89,29 @@ async function handleEvent(event) {
                 const willNotAttend = record.get('Will not attend');
 
                 if (willAttend === undefined && willNotAttend === undefined) {
+                    const retryKey = uuid();
+                    console.log('Generated retry key:', retryKey);
+
                     if (WillAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will attend': true});
                         await client.replyMessage(replyToken, [{
                             type: 'text',
                             text: 'Thank you for confirming your attendance!'
-                        }]);
+                        }], {
+                            headers: {
+                                'X-Line-Retry-Key': retryKey
+                            }
+                        });
                     } else if (WillNotAttendConfirmations.some((phrase) => messageText.includes(phrase))) {
                         await airtableBase('Bot Test').update(record.id, {'Will not attend': true});
-                        await client.replyMessage(replyToken, {type: 'text', text: 'Thank you for informing us.'});
+                        await client.replyMessage(replyToken, {
+                            type: 'text',
+                            text: 'Thank you for informing us.'
+                        }, {
+                            headers: {
+                                'X-Line-Retry-Key': retryKey
+                            }
+                        });
                     } else {
                         return null;
                     }
