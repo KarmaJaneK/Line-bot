@@ -40,6 +40,13 @@ async function sendReminders() {
                 const retryKey = uuid();
                 console.log('Generated retry key:', retryKey);
 
+                // Log the request details for debugging
+                console.log('Sending message to user:', userId);
+                console.log('Message:', message);
+                console.log('Headers:', {
+                    'X-Line-Retry-Key': retryKey
+                });
+
                 await client.pushMessage(userId, [{type: 'text', text: message}], {
                     headers: {
                         'X-Line-Retry-Key': retryKey
