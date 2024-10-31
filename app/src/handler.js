@@ -58,7 +58,7 @@ async function sendReminders(userId) {
 
                 // Log the request body for debugging
                 const requestBody = {
-                    to: recordUserId,
+                    to: String(recordUserId),
                     messages: [{ type: 'text', text: message }]
                 };
                 console.log('Request body:', JSON.stringify(requestBody, null, 2));
