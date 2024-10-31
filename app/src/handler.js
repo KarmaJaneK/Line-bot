@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 // Function to send reminders to users
-async function sendReminders() {
+async function sendReminders(userId) {
     try {
         const records = await airtableBase('Bot Test').select().all();
         const tomorrow = new Date();
@@ -21,7 +21,7 @@ async function sendReminders() {
             }
             const {
                 'Booking date/time': classTime,
-                'Line ID': userId,
+                'Line ID': recordUserId,
                 'Reminder sent': reminderSent,
                 'Will attend': willAttend,
                 'Will not attend': willNotAttend
@@ -29,7 +29,7 @@ async function sendReminders() {
 
             if (!reminderSent && classTime.startsWith(tomorrowDate) && willAttend === undefined && willNotAttend === undefined) {
                 const remainingClasses = await airtableBase('Unused Classes').select({
-                    filterByFormula: `{Line ID} = '${userId}'`,
+                    filterByFormula: `{Line ID} = '${recordUserId}'`,
                 }).all();
 
                 let remainingClassesMessage = `\n\nRemaining classes: (${remainingClasses.length})`;
@@ -41,20 +41,21 @@ async function sendReminders() {
                 console.log('Generated retry key:', retryKey);
 
                 // Log the request details for debugging
-                console.log('Sending message to user:', userId);
+                console.log('Sending message to user:', recordUserId);
                 console.log('Message:', message);
                 console.log('Headers:', {
                     'X-Line-Retry-Key': retryKey
                 });
+
                 // Validate userId before sending the request
-                if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-                    console.error('Invalid userId:', userId);
+                if (!recordUserId || typeof recordUserId !== 'string' || recordUserId.trim() === '') {
+                    console.error('Invalid userId:', recordUserId);
                     continue;
                 }
 
                 // Log the request body for debugging
                 const requestBody = {
-                    to: userId,
+                    to: recordUserId,
                     messages: [{ type: 'text', text: message }]
                 };
                 console.log('Request body:', JSON.stringify(requestBody, null, 2));
@@ -68,7 +69,7 @@ async function sendReminders() {
         }
     } catch (error) {
         console.error('Error in sendReminders:', error);
-        setTimeout(sendReminders, 5 * 60 * 60 * 1000);
+        setTimeout(() => sendReminders(userId), 5 * 60 * 60 * 1000);
     }
 }
 
